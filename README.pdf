@@ -1,0 +1,165 @@
+# 📚 Adaptive Learning Dashboard
+
+Интерактивная платформа для отслеживания прогресса студентов с AI-рекомендациями и персонализированным обучением.
+
+## 🎯 Возможности
+
+- ✅ Аналитика прогресса студентов в реальном времени
+- ✅ Интерактивные тесты с автоматической проверкой
+- ✅ AI-рекомендации на основе результатов
+- ✅ Персонализированные учебные пути
+- ✅ Сравнение статистики по классам и группам
+- ✅ Экспорт отчетов (PDF, CSV)
+- ✅ Real-time уведомления о результатах
+
+## 🛠️ Технологический стек
+
+**Frontend:**
+- React 18.3
+- Chart.js для графиков
+- TailwindCSS для дизайна
+- Axios для API запросов
+- React Router v6
+
+**Backend:**
+- Node.js + Express.js
+- PostgreSQL + Sequelize ORM
+- JWT для аутентификации
+- Socket.io для Real-time обновлений
+
+**Бизнес-логика:**
+- Система расчета адаптивного уровня сложности
+- Алгоритм рекомендаций на основе прогресса
+- Генерация отчетов и статистики
+
+## 📁 Структура проекта
+
+```
+adaptive-learning-dashboard/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── StudentProgress.jsx
+│   │   │   ├── QuizInterface.jsx
+│   │   │   └── RecommendationCard.jsx
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── App.jsx
+│   │   └── index.css
+│   ├── package.json
+│   └── .env.example
+├── backend/
+│   ├── app/
+│   │   ├── controllers/
+│   │   │   ├── studentController.js
+│   │   │   ├── progressController.js
+│   │   │   └── recommendationController.js
+│   │   ├── models/
+│   │   │   ├── Student.js
+│   │   │   ├── Progress.js
+│   │   │   └── Quiz.js
+│   │   ├── routes/
+│   │   │   └── api.js
+│   │   └── middleware/
+│   │       └── auth.js
+│   ├── server.js
+│   ├── package.json
+│   └── .env.example
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+## 🚀 Установка и запуск
+
+### Требования
+- Node.js 18+
+- PostgreSQL 14+
+- Docker (опционально)
+
+### Локальный запуск
+
+```bash
+# 1. Клонируй репозиторий
+git clone <repo-url>
+cd adaptive-learning-dashboard
+
+# 2. Установи зависимости frontend
+cd frontend
+npm install
+npm start
+
+# 3. В другом терминале - backend
+cd ../backend
+npm install
+npm run dev
+```
+
+### Docker Compose
+
+```bash
+docker-compose up --build
+# Frontend доступен на http://localhost:3000
+# Backend API на http://localhost:5000
+```
+
+## 📚 API Endpoints
+
+```
+POST   /api/auth/register      - Регистрация студента
+POST   /api/auth/login         - Вход в систему
+GET    /api/students/:id       - Профиль студента
+GET    /api/progress/:id       - История прогресса
+POST   /api/quiz/submit        - Отправка ответов теста
+GET    /api/recommendations/:id - Получить рекомендации
+GET    /api/analytics          - Аналитика по классам
+```
+
+## 💾 Переменные окружения
+
+**Frontend** (.env):
+```
+REACT_APP_API_BASE_URL=http://localhost:5000/api
+REACT_APP_WS_URL=ws://localhost:5000
+```
+
+**Backend** (.env):
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/learning_db
+JWT_SECRET=your_secret_key
+NODE_ENV=development
+PORT=5000
+```
+
+## 🧪 Тестирование
+
+```bash
+cd backend
+npm test
+
+cd ../frontend
+npm test
+```
+
+## 📦 Развертывание
+
+**На Vercel (Frontend):**
+```bash
+npm i -g vercel
+vercel
+```
+
+**На Heroku (Backend):**
+```bash
+heroku create your-app-name
+git push heroku main
+```
+
+## 📝 Лицензия
+
+MIT
+
+## 👨‍💻 Автор
+
+Created for educational purposes

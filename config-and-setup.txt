@@ -1,0 +1,426 @@
+{
+  "name": "adaptive-learning-dashboard",
+  "version": "1.0.0",
+  "description": "Adaptive learning platform with AI recommendations",
+  "main": "server.js",
+  "scripts": {
+    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\"",
+    "build": "cd frontend && npm run build && cd ../backend && npm run build",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.{js,jsx}",
+    "format": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "keywords": ["education", "AI", "learning", "dashboard"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.3.0",
+    "react-router-dom": "^6.0.0",
+    "axios": "^1.6.0",
+    "recharts": "^2.10.0",
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.1.0",
+    "sequelize": "^6.35.0",
+    "pg": "^8.10.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.0.0",
+    "babel-loader": "^9.0.0",
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "tailwindcss": "^3.3.0"
+  }
+}
+*/
+
+// Tailwind Config 
+/*
+module.exports {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,jsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3b82f6',
+        secondary: '#10b981',
+        dark: '#1f2937',
+      },
+    },
+  },
+  plugins: [],
+}
+*/
+
+// Vite Config 
+/*
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      }
+    }
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+  }
+})
+*/
+
+// Docker Compose (for all projects) 
+/*
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: learning_db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-learning_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cache
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: learning_api
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/learning_db
+      JWT_SECRET: your-secret-key-here
+      REDIS_URL: redis://redis:6379
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: learning_app
+    environment:
+      VITE_API_URL: http://localhost:5000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: learning_network
+*/
+
+// .env.example 
+/*
+# Database
+DATABASE_URLpostgresql://postgres:password@localhost:5432/learning_db
+DB_HOSTlocalhost
+DB_PORT5432
+DB_USERpostgres
+DB_PASSWORDpassword
+DB_NAMElearning_db
+
+# JWT
+JWT_SECRETyour_very_secret_key_here_change_in_production
+
+# Server
+NODE_ENVdevelopment
+PORT5000
+API_URLhttp://localhost:5000
+
+# Frontend
+VITE_API_URLhttp://localhost:5000
+VITE_WS_URLws://localhost:5000
+
+# Redis
+REDIS_URLredis://localhost:6379
+
+# Email
+SMTP_HOSTsmtp.gmail.com
+SMTP_PORT587
+SMTP_USERyour_email@gmail.com
+SMTP_PASSyour_app_password
+
+# Third Party APIs
+JUDGE0_API_KEYyour_judge0_key
+OPENAI_API_KEYyour_openai_key
+
+# Deployment
+VERCEL_TOKENyour_vercel_token
+HEROKU_API_KEYyour_heroku_key
+*/
+
+// GitHub Actions - CI.yml 
+/*
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linter
+      run: npm run lint
+
+    - name: Run tests
+      run: npm test -- --coverage
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/lcov.info
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image
+      run: docker-compose build
+
+    - name: Run Docker containers
+      run: docker-compose up -d
+
+    - name: Wait for containers
+      run: sleep 30
+
+    - name: Test API
+      run: curl -f http://localhost:5000/api/health || exit 1
+*/
+
+// Dockerfile (Backend) 
+/*
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --onlyproduction
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["node", "server.js"]
+*/
+
+// Dockerfile (Frontend) 
+/*
+FROM node:18-alpine as builder
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --frombuilder /app/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+*/
+
+// .gitignore 
+/*
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Production
+/build
+/dist
+
+# Misc
+.DS_Store
+*.pem
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Database
+*.sqlite
+*.db
+*/
+
+// ESLint Config 
+/*
+module.exports {
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+  ],
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+  plugins: ['react', 'react-hooks'],
+  rules: {
+    'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+    'no-unused-vars': 'warn',
+    'prefer-const': 'error',
+  },
+};
+*/
+
+// Prettier Config 
+/*
+module.exports {
+  semi: true,
+  trailingComma: 'es5',
+  singleQuote: true,
+  printWidth: 100,
+  tabWidth: 2,
+  useTabs: false,
+  jsxSingleQuote: false,
+  bracketSpacing: true,
+  arrowParens: 'always',
+};
+*/
+
+// Git Hooks (Husky) 
+/*
+// .husky/pre-commit
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npm run lint-staged
+
+// .husky/commit-msg
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx --no -- commitlint --edit
+
+// lint-staged config in package.json
+"lint-staged": {
+  "*.{js,jsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,css,md}": ["prettier --write"]
+}
